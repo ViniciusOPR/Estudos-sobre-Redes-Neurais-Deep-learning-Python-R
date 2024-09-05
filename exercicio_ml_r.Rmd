@@ -1,0 +1,54 @@
+---
+Exercício Soja - R - Instância
+---
+
+```{r}
+#install.packages('e1071')
+library(dplyr)
+library(caret)
+library(e1071)
+```
+```{r}
+#carregando a base de dados
+soja = read.csv('soybean.csv', stringsAsFactors = T)
+soja
+dim(soja)
+#classes
+unique(soja$class)
+soja$class = as.factor(soja$class)
+```
+Gerando dois conjuntos para teste e treino com 70% e 30% das instâncias aproximadamente
+```{r}
+amostra = sample(2, 683, replace = T, prob = c(0.7,0.3))
+sojatreino = soja[amostra==1,]
+sojateste = soja[amostra==2,]
+```
+Visualizando dimensões dos conjuntos
+```{r}
+dim(sojatreino)
+dim(sojateste)
+```
+Criando o modelo
+```{r}
+modelo <- naiveBayes(class ~., sojatreino)
+modelo
+```
+Realizando a previsão
+```{r}
+predicao <- predict(modelo, sojateste)
+predicao
+```
+Matriz de Confusão
+```{r}
+confusao = confusionMatrix(sojateste$class,predicao)
+confusao
+```
+Taxas de acerto e erro
+```{r}
+accuracy <- confusao$overall['Accuracy']
+error_rate <- 1 - accuracy
+cat("Taxa de Acerto: ", accuracy, "\n")
+cat("Taxa de Erro: ", error_rate, "\n")
+
+```
+
